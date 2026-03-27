@@ -2,7 +2,7 @@ import './globals.css'
 
 export const metadata = {
   title: 'Levion - Health Tracker',
-  description: 'Track your medicines, water, exercise, coffee & mood',
+  description: 'Track your medicines, water, exercise, coffee and mood',
 }
 
 export default function RootLayout({ children }) {
