@@ -4,17 +4,17 @@ import { supabase } from '@/lib/supabase'
 
 export default function Login() {
   const [email, setEmail] = useState('')
-  const [sent, setSent] = useState(false)
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleLogin = async (e) => {
     e.preventDefault()
     setLoading(true)
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: window.location.origin + '/auth/callback' }
-    })
-    if (!error) setSent(true)
+    setError('')
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) setError(error.message)
+    else window.location.href = '/'
     setLoading(false)
   }
 
@@ -28,25 +28,19 @@ export default function Login() {
           <h1 style={{ fontSize: 28, fontWeight: 500, color: 'var(--text)', letterSpacing: '-0.03em' }}>Levion</h1>
           <p style={{ fontSize: 14, color: 'var(--text-s)', fontWeight: 300, marginTop: 4 }}>Your daily health companion</p>
         </div>
-
-        {sent ? (
-          <div style={{ background: 'var(--bg)', border: '0.5px solid var(--border)', borderRadius: 14, padding: 24, textAlign: 'center' }}>
-            <p style={{ fontSize: 16, fontWeight: 500, color: 'var(--text)', marginBottom: 4 }}>Check your email!</p>
-            <p style={{ fontSize: 13, color: 'var(--text-s)', fontWeight: 300 }}>We sent a magic link to <strong>{email}</strong></p>
-          </div>
-        ) : (
-          <div style={{ background: 'var(--bg)', border: '0.5px solid var(--border)', borderRadius: 14, padding: 24 }}>
-            <form onSubmit={handleLogin}>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" required
-                style={{ width: '100%', boxSizing: 'border-box', padding: '12px 14px', borderRadius: 10, border: '0.5px solid var(--border)', background: 'var(--bg2)', fontSize: 14, color: 'var(--text)', marginBottom: 12 }} />
-              <button type="submit" disabled={loading}
-                style={{ width: '100%', padding: 12, borderRadius: 10, border: 'none', background: '#085041', color: '#E1F5EE', fontSize: 14, fontWeight: 500, cursor: 'pointer', fontFamily: "'Outfit',sans-serif", opacity: loading ? 0.7 : 1 }}>
-                {loading ? 'Sending...' : 'Send magic link'}
-              </button>
-            </form>
-            <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-t)', fontWeight: 300, marginTop: 12 }}>No password needed</p>
-          </div>
-        )}
+        <div style={{ background: 'var(--bg)', border: '0.5px solid var(--border)', borderRadius: 14, padding: 24 }}>
+          <form onSubmit={handleLogin}>
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" required
+              style={{ width: '100%', boxSizing: 'border-box', padding: '12px 14px', borderRadius: 10, border: '0.5px solid var(--border)', background: 'var(--bg2)', fontSize: 14, color: 'var(--text)', marginBottom: 12 }} />
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" required
+              style={{ width: '100%', boxSizing: 'border-box', padding: '12px 14px', borderRadius: 10, border: '0.5px solid var(--border)', background: 'var(--bg2)', fontSize: 14, color: 'var(--text)', marginBottom: 12 }} />
+            {error && <p style={{ fontSize: 12, color: '#E24B4A', marginBottom: 12 }}>{error}</p>}
+            <button type="submit" disabled={loading}
+              style={{ width: '100%', padding: 12, borderRadius: 10, border: 'none', background: '#085041', color: '#E1F5EE', fontSize: 14, fontWeight: 500, cursor: 'pointer', fontFamily: "'Outfit',sans-serif", opacity: loading ? 0.7 : 1 }}>
+              {loading ? 'Signing in...' : 'Sign in'}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   )
