@@ -136,7 +136,8 @@ function Dashboard({user,meds,setMeds,waterLogs,setWaterLogs,coffee,setCoffee,mo
             <p style={{fontSize:15,color:isT?'var(--bg)':'var(--text-s)',marginTop:4,fontWeight:500}}>{d.getDate()}</p>
           </div>)})}
       </div>
-      <div style={{background:T[800],borderRadius:14,padding:'16px 18px',marginBottom:12,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+        <p style={{fontSize:16,fontWeight:500,color:'var(--text)',marginBottom:12}}>{new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</p>
+<div style={{background:T[800],borderRadius:14,padding:'16px 18px',marginBottom:12,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
         <div><p style={{fontSize:13,color:T[100],fontWeight:300}}>Current streak</p><p style={{fontSize:24,fontWeight:500,color:T[50],marginTop:4}}>Day 1</p></div>
         <Icon type="fire" size={28}/>
       </div>
