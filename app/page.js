@@ -379,10 +379,10 @@ export default function Home(){
   const loadData=useCallback(async(uid)=>{const today=getLocalDate();try{const[m,w,c,mo,ex]=await Promise.all([supabase.from('medicines').select('*, logs:medicine_logs(*)').eq('user_id',uid).eq('active',true),supabase.from('water_logs').select('*').eq('user_id',uid).eq('date',today).order('logged_at'),supabase.from('coffee_logs').select('*').eq('user_id',uid).eq('date',today).limit(1),supabase.from('mood_entries').select('*').eq('user_id',uid).eq('date',today).maybeSingle(),supabase.from('exercise_logs').select('*').eq('user_id',uid).eq('date',today).order('logged_at')]);if(m.data)setMeds(m.data);if(w.data)setWaterLogs(w.data);if(c.data?.[0])setCoffee(c.data[0].cups);if(mo.data)setMoodEntry(mo.data);if(ex.data)setExerciseLogs(ex.data)}catch(e){console.error(e)}},[])
 
   useEffect(()=>{
-    supabase.auth.getSession().then(async({data:{session}})=>{
-      if(session?.user){const u=session.user;const name=u.user_metadata?.full_name||u.email?.split('@')[0]||'User';setUser({id:u.id,name,email:u.email});try{await supabase.from('profiles').upsert({id:u.id,name},{onConflict:'id',ignoreDuplicates:true})}catch(e){};try{const{data:p}=await supabase.from('profiles').select('name').eq('id',u.id).maybeSingle();if(p?.name)setUser(prev=>({...prev,name:p.name}))}catch(e){};loadData(u.id)}
+   supabase.auth.getSession().then(async({data:{session}})=>{
+      if(session?.user){const u=session.user;const name=u.user_metadata?.full_name||u.email?.split('@')[0]||'User';setUser({id:u.id,name,email:u.email});loadData(u.id)}
       setLoading(false)
-    })
+    }).catch(()=>{setLoading(false)})
     const{data:{subscription}}=supabase.auth.onAuthStateChange(async(_e,session)=>{if(session?.user){const u=session.user;const name=u.user_metadata?.full_name||u.email?.split('@')[0]||'User';setUser({id:u.id,name,email:u.email});try{await supabase.from('profiles').upsert({id:u.id,name},{onConflict:'id',ignoreDuplicates:true})}catch(e){};loadData(u.id)}else setUser(null)})
     return()=>subscription.unsubscribe()
   },[loadData])
